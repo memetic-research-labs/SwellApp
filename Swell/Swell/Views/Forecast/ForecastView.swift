@@ -103,6 +103,7 @@ struct ForecastView: View {
             .frame(maxWidth: .infinity)
 
             HStack(spacing: 12) {
+                Spacer()
                 conditionChip(
                     icon: "wind",
                     label: windLabel(for: score.windScore),
@@ -253,41 +254,40 @@ struct CompactRow: View {
                 .frame(width: 3)
 
             Text(timeDisplay)
-                .font(.system(size: 11, weight: .semibold, design: .rounded))
-                .frame(width: 34, alignment: .leading)
-                .padding(.leading, 4)
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .padding(.leading, 8)
 
             starBadge
-                .frame(width: 28, alignment: .leading)
+                .padding(.leading, 6)
+
+            Spacer()
 
             Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
-                .font(.system(size: 13, weight: .bold, design: .rounded).monospacedDigit())
-                .frame(width: 42, alignment: .trailing)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
 
             Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
-                .font(.system(size: 11).monospacedDigit())
+                .font(.system(size: 13).monospacedDigit())
                 .foregroundStyle(.secondary)
-                .frame(width: 38, alignment: .trailing)
+                .padding(.leading, 8)
 
             windBadge
-                .frame(width: 50, alignment: .trailing)
+                .padding(.leading, 6)
         }
-        .padding(.vertical, 3)
+        .padding(.vertical, 6)
     }
 
     var starBadge: some View {
         Text("\(score.starRating)★")
-            .font(.system(size: 10, weight: .bold))
+            .font(.system(size: 11, weight: .bold))
             .foregroundStyle(starColor)
     }
 
     var windBadge: some View {
         Text(UnitFormat.windLabelShort(for: score.windScore))
-            .font(.system(size: 8, weight: .semibold))
+            .font(.system(size: 10, weight: .semibold))
             .foregroundStyle(windBadgeColor)
-            .padding(.horizontal, 4)
-            .padding(.vertical, 1)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
             .background(windBadgeColor.opacity(0.10))
             .clipShape(RoundedRectangle(cornerRadius: 3))
     }
