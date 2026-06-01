@@ -253,27 +253,27 @@ struct CompactRow: View {
                 .frame(width: 3)
 
             Text(timeDisplay)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .frame(width: 36, alignment: .leading)
-                .padding(.leading, 6)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .frame(width: 34, alignment: .leading)
+                .padding(.leading, 4)
 
             starBadge
                 .frame(width: 28, alignment: .leading)
 
             Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
-                .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
+                .font(.system(size: 13, weight: .bold, design: .rounded).monospacedDigit())
+                .frame(width: 42, alignment: .trailing)
                 .frame(maxWidth: .infinity, alignment: .trailing)
 
             Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
-                .font(.system(size: 12).monospacedDigit())
+                .font(.system(size: 11).monospacedDigit())
                 .foregroundStyle(.secondary)
-                .frame(width: 42, alignment: .trailing)
+                .frame(width: 38, alignment: .trailing)
 
             windBadge
-                .frame(width: 56, alignment: .trailing)
-                .padding(.trailing, 4)
+                .frame(width: 50, alignment: .trailing)
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 3)
     }
 
     var starBadge: some View {
@@ -284,7 +284,7 @@ struct CompactRow: View {
 
     var windBadge: some View {
         Text(UnitFormat.windLabelShort(for: score.windScore))
-            .font(.system(size: 9, weight: .semibold))
+            .font(.system(size: 8, weight: .semibold))
             .foregroundStyle(windBadgeColor)
             .padding(.horizontal, 4)
             .padding(.vertical, 1)
