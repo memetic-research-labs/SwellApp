@@ -195,7 +195,9 @@ struct ForecastView: View {
     }
 
     var hourlySection: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        let scores = Array(viewModel.hourlyScores.prefix(24))
+
+        return VStack(alignment: .leading, spacing: 0) {
             Text("Today")
                 .font(.headline)
                 .padding(.horizontal, 8)
@@ -203,15 +205,102 @@ struct ForecastView: View {
 
             Divider()
 
-            ForEach(Array(viewModel.hourlyScores.prefix(24).enumerated()), id: \.element.id) { index, score in
-                CompactRow(score: score, unit: unit)
-                if index < 23 {
-                    Divider()
+            Grid(horizontalSpacing: 10, verticalSpacing: 0) {
+                GridRow {
+                    Text("Time")
+                    Text("Stars")
+                    Text("Swell").gridColumnAlignment(.trailing)
+                    Text("Wind").gridColumnAlignment(.trailing)
+                    Text("").gridColumnAlignment(.trailing)
+                }
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+
+                Divider()
+
+                ForEach(scores) { score in
+                    GridRow {
+                        Text(timeDisplay(for: score))
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+
+                        Text("\(score.starRating)★")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(starColor(score.starRating))
+
+                        Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
+                            .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
+
+                        Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
+                            .font(.system(size: 13).monospacedDigit())
+                            .foregroundStyle(.secondary)
+
+                        windBadgeView(score: score)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 8)
+                    .background(alignment: .leading) {
+                        Rectangle()
+                            .fill(qualityBarColor(score.starRating))
+                            .frame(width: 3)
+                    }
+                    .background(alignment: .bottom) {
+                        if score.id != scores.last?.id {
+                            Divider()
+                        }
+                    }
                 }
             }
         }
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func timeDisplay(for score: HourlySurfScore) -> String {
+        let parts = score.time.components(separatedBy: "T")
+        if parts.count == 2 { return String(parts[1].prefix(5)) }
+        return score.time
+    }
+
+    private func starColor(_ starRating: Int) -> Color {
+        switch starRating {
+        case 4...5: return .green
+        case 3: return .yellow
+        default: return .red
+        }
+    }
+
+    private func qualityBarColor(_ starRating: Int) -> Color {
+        switch starRating {
+        case 4...5: return .green.opacity(0.7)
+        case 3: return .yellow.opacity(0.7)
+        default: return .red.opacity(0.5)
+        }
+    }
+
+    private func windBadgeColor(_ windScore: Double) -> Color {
+        if windScore > 0.6 { return .green }
+        if windScore > 0.3 { return .yellow }
+        return .red
+    }
+
+    private func windBadgeView(score: HourlySurfScore) -> some View {
+        Text(UnitFormat.windLabelShort(for: score.windScore))
+            .font(.system(size: 10, weight: .semibold))
+            .foregroundStyle(windBadgeColor(score.windScore))
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .background(windBadgeColor(score.windScore).opacity(0.10))
+            .clipShape(RoundedRectangle(cornerRadius: 3))
+    }
+
+    private func qualityColor(_ stars: Int) -> Color {
+        switch stars {
+        case 4...5: return .green
+        case 3: return .yellow
+        default: return .red
+        }
     }
 
     private func swellDirectionLabel(_ direction: Double) -> String {
@@ -228,95 +317,4 @@ struct ForecastView: View {
         return "Onshore"
     }
 
-    private func windColor(_ windScore: Double) -> Color {
-        if windScore > 0.6 { return .green }
-        if windScore > 0.3 { return .yellow }
-        return .red
-    }
-
-    private func qualityColor(_ stars: Int) -> Color {
-        switch stars {
-        case 4...5: return .green
-        case 3: return .yellow
-        default: return .red
-        }
-    }
-}
-
-struct CompactRow: View {
-    let score: HourlySurfScore
-    let unit: UnitSystem
-
-    var body: some View {
-        HStack(spacing: 0) {
-            Rectangle()
-                .fill(qualityBarColor)
-                .frame(width: 3)
-
-            Text(timeDisplay)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                .padding(.leading, 8)
-
-            starBadge
-                .padding(.leading, 6)
-
-            Spacer()
-
-            Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
-                .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
-
-            Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
-                .font(.system(size: 13).monospacedDigit())
-                .foregroundStyle(.secondary)
-                .padding(.leading, 8)
-
-            windBadge
-                .padding(.leading, 6)
-        }
-        .padding(.vertical, 6)
-    }
-
-    var starBadge: some View {
-        Text("\(score.starRating)★")
-            .font(.system(size: 11, weight: .bold))
-            .foregroundStyle(starColor)
-    }
-
-    var windBadge: some View {
-        Text(UnitFormat.windLabelShort(for: score.windScore))
-            .font(.system(size: 10, weight: .semibold))
-            .foregroundStyle(windBadgeColor)
-            .padding(.horizontal, 5)
-            .padding(.vertical, 2)
-            .background(windBadgeColor.opacity(0.10))
-            .clipShape(RoundedRectangle(cornerRadius: 3))
-    }
-
-    var starColor: Color {
-        switch score.starRating {
-        case 4...5: return .green
-        case 3: return .yellow
-        default: return .red
-        }
-    }
-
-    var qualityBarColor: Color {
-        switch score.starRating {
-        case 4...5: return .green.opacity(0.7)
-        case 3: return .yellow.opacity(0.7)
-        default: return .red.opacity(0.5)
-        }
-    }
-
-    var windBadgeColor: Color {
-        if score.windScore > 0.6 { return .green }
-        if score.windScore > 0.3 { return .yellow }
-        return .red
-    }
-
-    var timeDisplay: String {
-        let parts = score.time.components(separatedBy: "T")
-        if parts.count == 2 { return String(parts[1].prefix(5)) }
-        return score.time
-    }
 }
