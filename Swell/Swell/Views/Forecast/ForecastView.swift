@@ -205,50 +205,58 @@ struct ForecastView: View {
 
             Divider()
 
-            Grid(horizontalSpacing: 12, verticalSpacing: 0) {
-                GridRow {
-                    Text("Time")
-                    Text("Stars")
-                    Text("Swell")
-                        .gridColumnAlignment(.trailing)
-                    Text("Wind")
-                        .gridColumnAlignment(.trailing)
-                    Text("")
-                        .gridColumnAlignment(.trailing)
+            HStack(spacing: 0) {
+                Color.clear.frame(width: 3)
+                Group {
+                    Text("Time").frame(width: 42, alignment: .leading)
+                    Text("Stars").frame(width: 40, alignment: .leading)
                 }
-                .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(.secondary)
-
-                GridRow {
-                    Divider().gridCellColumns(5)
+                Spacer()
+                Group {
+                    Text("Swell").frame(width: 50, alignment: .trailing)
+                    Text("Wind").frame(width: 54, alignment: .trailing)
+                    Text("").frame(width: 62, alignment: .trailing)
                 }
+            }
+            .font(.system(size: 10, weight: .medium))
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
 
-                ForEach(scores) { score in
-                    GridRow {
+            Divider()
+
+            ForEach(scores) { score in
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .fill(qualityBarColor(score.starRating))
+                        .frame(width: 3)
+
+                    HStack(spacing: 0) {
                         Text(timeDisplay(for: score))
                             .font(.system(size: 13, weight: .semibold, design: .rounded))
-
+                            .frame(width: 42, alignment: .leading)
                         Text("\(score.starRating)★")
                             .font(.system(size: 11, weight: .bold))
                             .foregroundStyle(starColor(score.starRating))
+                            .frame(width: 40, alignment: .leading)
+                    }
 
+                    Spacer()
+
+                    HStack(spacing: 0) {
                         Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
                             .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
-
+                            .frame(width: 50, alignment: .trailing)
                         Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
                             .font(.system(size: 13).monospacedDigit())
                             .foregroundStyle(.secondary)
-
+                            .frame(width: 54, alignment: .trailing)
                         windBadgeView(score: score)
-                    }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 8)
-                    .background(alignment: .leading) {
-                        Rectangle()
-                            .fill(qualityBarColor(score.starRating))
-                            .frame(width: 3)
+                            .frame(width: 62, alignment: .trailing)
                     }
                 }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 8)
             }
         }
         .background(.regularMaterial)
