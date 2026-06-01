@@ -106,7 +106,7 @@ struct ForecastView: View {
                 conditionChip(
                     icon: "wind",
                     label: windLabel(for: score.windScore),
-                    color: windColor(score.windScore)
+                    color: .purple
                 )
                 conditionChip(
                     icon: "stopwatch",
@@ -254,27 +254,25 @@ struct CompactRow: View {
 
             Text(timeDisplay)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .frame(width: 40, alignment: .leading)
-                .padding(.leading, 8)
+                .frame(width: 36, alignment: .leading)
+                .padding(.leading, 6)
 
             starBadge
-                .frame(width: 32, alignment: .leading)
-
-            Spacer()
+                .frame(width: 28, alignment: .leading)
 
             Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
                 .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
+                .frame(maxWidth: .infinity, alignment: .trailing)
 
             Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
                 .font(.system(size: 12).monospacedDigit())
                 .foregroundStyle(.secondary)
-                .frame(width: 44, alignment: .trailing)
-                .padding(.leading, 4)
+                .frame(width: 42, alignment: .trailing)
 
             windBadge
-                .padding(.leading, 4)
+                .frame(width: 56, alignment: .trailing)
+                .padding(.trailing, 4)
         }
-        .padding(.trailing, 8)
         .padding(.vertical, 6)
     }
 

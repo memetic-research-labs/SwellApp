@@ -171,8 +171,8 @@ struct ShorelineConditionView: View {
 
     var statsRow: some View {
         HStack(spacing: 24) {
-            statChip(color: swellColor, label: swellLabel)
             statChip(color: windColor, label: windLabel)
+            statChip(color: swellColor, label: swellLabel)
         }
     }
 
