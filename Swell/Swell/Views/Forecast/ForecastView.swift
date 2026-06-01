@@ -205,20 +205,23 @@ struct ForecastView: View {
 
             Divider()
 
-            Grid(horizontalSpacing: 10, verticalSpacing: 0) {
+            Grid(horizontalSpacing: 12, verticalSpacing: 0) {
                 GridRow {
                     Text("Time")
                     Text("Stars")
-                    Text("Swell").gridColumnAlignment(.trailing)
-                    Text("Wind").gridColumnAlignment(.trailing)
-                    Text("").gridColumnAlignment(.trailing)
+                    Text("Swell")
+                        .gridColumnAlignment(.trailing)
+                    Text("Wind")
+                        .gridColumnAlignment(.trailing)
+                    Text("")
+                        .gridColumnAlignment(.trailing)
                 }
                 .font(.system(size: 10, weight: .medium))
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
 
-                Divider()
+                GridRow {
+                    Divider().gridCellColumns(5)
+                }
 
                 ForEach(scores) { score in
                     GridRow {
@@ -244,11 +247,6 @@ struct ForecastView: View {
                         Rectangle()
                             .fill(qualityBarColor(score.starRating))
                             .frame(width: 3)
-                    }
-                    .background(alignment: .bottom) {
-                        if score.id != scores.last?.id {
-                            Divider()
-                        }
                     }
                 }
             }
