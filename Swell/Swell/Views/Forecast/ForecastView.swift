@@ -69,20 +69,19 @@ struct ForecastView: View {
 
     var mainContent: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: 12) {
                 if let current = viewModel.hourlyScores.first {
                     heroCard(for: current)
                 }
                 chartSection
                 hourlySection
             }
-            .padding(.horizontal)
-            .padding(.bottom, 24)
+            .padding(12)
         }
     }
 
     func heroCard(for score: HourlySurfScore) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
             HStack(alignment: .lastTextBaseline) {
                 Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
                     .font(.system(size: 44, weight: .bold, design: .rounded))
@@ -103,7 +102,7 @@ struct ForecastView: View {
             )
             .frame(maxWidth: .infinity)
 
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 conditionChip(
                     icon: "wind",
                     label: windLabel(for: score.windScore),
@@ -119,11 +118,12 @@ struct ForecastView: View {
                     label: swellDirectionLabel(score.swellDirection),
                     color: .blue
                 )
+                Spacer()
             }
         }
-        .padding(16)
+        .padding(12)
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     func conditionChip(icon: String, label: String, color: Color) -> some View {
@@ -186,31 +186,31 @@ struct ForecastView: View {
             }
             .chartYScale(domain: 0...5)
             .chartYAxis(.hidden)
-            .frame(height: 150)
+            .frame(height: 140)
         }
-        .padding(16)
+        .padding(12)
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     var hourlySection: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Today")
                 .font(.headline)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
 
             Divider()
 
             ForEach(Array(viewModel.hourlyScores.prefix(24).enumerated()), id: \.element.id) { index, score in
                 CompactRow(score: score, unit: unit)
                 if index < 23 {
-                    Divider().padding(.leading, 14)
+                    Divider().padding(.leading, 12)
                 }
             }
         }
         .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private func swellDirectionLabel(_ direction: Double) -> String {
