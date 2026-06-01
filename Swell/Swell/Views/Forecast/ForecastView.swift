@@ -197,15 +197,15 @@ struct ForecastView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Today")
                 .font(.headline)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
 
             Divider()
 
             ForEach(Array(viewModel.hourlyScores.prefix(24).enumerated()), id: \.element.id) { index, score in
                 CompactRow(score: score, unit: unit)
                 if index < 23 {
-                    Divider().padding(.leading, 12)
+                    Divider()
                 }
             }
         }
@@ -250,49 +250,48 @@ struct CompactRow: View {
         HStack(spacing: 0) {
             Rectangle()
                 .fill(qualityBarColor)
-                .frame(width: 4)
-                .padding(.vertical, 1)
+                .frame(width: 3)
 
             Text(timeDisplay)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                .frame(width: 48, alignment: .leading)
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .frame(width: 40, alignment: .leading)
                 .padding(.leading, 8)
 
             starBadge
-                .frame(width: 36, alignment: .leading)
+                .frame(width: 32, alignment: .leading)
 
             Spacer()
 
             Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
-                .font(.system(size: 15, weight: .bold, design: .rounded).monospacedDigit())
+                .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
 
             Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
-                .font(.system(size: 13).monospacedDigit())
+                .font(.system(size: 12).monospacedDigit())
                 .foregroundStyle(.secondary)
-                .frame(width: 48, alignment: .trailing)
-                .padding(.leading, 6)
+                .frame(width: 44, alignment: .trailing)
+                .padding(.leading, 4)
 
             windBadge
                 .padding(.leading, 4)
         }
-        .padding(.trailing, 16)
-        .padding(.vertical, 10)
+        .padding(.trailing, 8)
+        .padding(.vertical, 6)
     }
 
     var starBadge: some View {
         Text("\(score.starRating)★")
-            .font(.system(size: 11, weight: .bold))
+            .font(.system(size: 10, weight: .bold))
             .foregroundStyle(starColor)
     }
 
     var windBadge: some View {
         Text(UnitFormat.windLabelShort(for: score.windScore))
-            .font(.system(size: 10, weight: .semibold))
+            .font(.system(size: 9, weight: .semibold))
             .foregroundStyle(windBadgeColor)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 1)
             .background(windBadgeColor.opacity(0.10))
-            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .clipShape(RoundedRectangle(cornerRadius: 3))
     }
 
     var starColor: Color {
