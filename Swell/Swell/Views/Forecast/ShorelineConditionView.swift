@@ -10,15 +10,17 @@ struct ShorelineConditionView: View {
     private let size: CGFloat = 240
 
     var body: some View {
-        let half = size / 2
+        let oceanHeight = size * 0.85
+        let landHeight = size * 0.15
+        let shorelineY = oceanHeight - size / 2
 
         VStack(spacing: 10) {
             ZStack {
                 VStack(spacing: 0) {
                     oceanBackground
-                        .frame(height: half)
+                        .frame(height: oceanHeight)
                     landBackground
-                        .frame(height: half)
+                        .frame(height: landHeight)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 16))
 
@@ -30,19 +32,20 @@ struct ShorelineConditionView: View {
                         Rectangle()
                             .stroke(.black.opacity(0.1), lineWidth: 0.5)
                     )
+                    .offset(y: shorelineY)
 
                 Group {
                     Text("OCEAN")
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.45))
                         .tracking(4)
-                        .offset(y: -half + 20)
+                        .offset(y: -size / 2 + 18)
 
                     Text("LAND")
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.6))
                         .tracking(4)
-                        .offset(y: half - 20)
+                        .offset(y: size / 2 - 20)
                 }
 
                 swellArrow(size: size)
