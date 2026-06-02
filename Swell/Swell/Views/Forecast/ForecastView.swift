@@ -205,7 +205,7 @@ struct ForecastView: View {
 
             Divider()
 
-            HStack(spacing: 12) {
+            HStack(spacing: 0) {
                 Color.clear.frame(width: 3)
                 Text("Time").frame(maxWidth: .infinity, alignment: .leading)
                 Text("Stars").frame(maxWidth: .infinity, alignment: .leading)
@@ -221,26 +221,31 @@ struct ForecastView: View {
             Divider()
 
             ForEach(scores) { score in
-                HStack(spacing: 16) {
+                HStack(spacing: 0) {
                     Rectangle()
                         .fill(qualityBarColor(score.starRating))
                         .frame(width: 3)
 
                     Text(timeDisplay(for: score))
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Text("\(score.starRating)★")
                         .font(.system(size: 11, weight: .bold))
                         .foregroundStyle(starColor(score.starRating))
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
                         .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
                         .font(.system(size: 13).monospacedDigit())
                         .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     windBadgeView(score: score)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.vertical, 8)
                 .padding(.horizontal, 8)
