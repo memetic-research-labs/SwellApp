@@ -197,68 +197,62 @@ struct ForecastView: View {
     var hourlySection: some View {
         let scores = Array(viewModel.hourlyScores.prefix(24))
 
-        return VStack(alignment: .leading, spacing: 0) {
-            let columns: [GridItem] = [
-                GridItem(.fixed(3), spacing: 0),
-                GridItem(.flexible(), spacing: 8),
-                GridItem(.flexible(), spacing: 8),
-                GridItem(.flexible(), spacing: 8),
-                GridItem(.flexible(), spacing: 8),
-                GridItem(.flexible(), spacing: 8),
-            ]
+        let columns: [GridItem] = [
+            GridItem(.fixed(3), spacing: 0),
+            GridItem(.flexible(), spacing: 8),
+            GridItem(.flexible(), spacing: 8),
+            GridItem(.flexible(), spacing: 8),
+            GridItem(.flexible(), spacing: 8),
+            GridItem(.flexible(), spacing: 8),
+        ]
 
+        return VStack(alignment: .leading, spacing: 0) {
             Text("Today")
                 .font(.headline)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 6)
 
-            Divider()
-
             LazyVGrid(columns: columns, spacing: 0) {
-                Color.clear.frame(width: 3)
-                Text("Time")
-                Text("Stars")
-                Text("Swell")
-                Text("Wind")
-                Text("")
-            }
-            .font(.system(size: 10, weight: .medium))
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+                Group {
+                    Color.clear.frame(height: 0)
+                    Text("Time")
+                    Text("Stars")
+                    Text("Swell")
+                    Text("Wind")
+                    Text("")
+                }
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 4)
 
-            Divider()
+                ForEach(0..<6) { _ in
+                    Divider()
+                }
 
-            ForEach(scores) { score in
-                LazyVGrid(columns: columns, spacing: 0) {
+                ForEach(Array(scores.enumerated()), id: \.element.id) { index, score in
                     Rectangle()
                         .fill(qualityBarColor(score.starRating))
                         .frame(width: 3)
 
                     Text(timeDisplay(for: score))
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Text("\(score.starRating)★")
                         .font(.system(size: 11, weight: .bold))
                         .foregroundStyle(starColor(score.starRating))
-                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Text(UnitFormat.swellHeight(score.swellHeight, unit: unit))
                         .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
-                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Text(UnitFormat.windSpeed(score.windSpeed, unit: unit))
                         .font(.system(size: 13).monospacedDigit())
                         .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     windBadgeView(score: score)
-                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.vertical, 8)
-                .padding(.horizontal, 8)
             }
+            .padding(.horizontal, 8)
         }
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
