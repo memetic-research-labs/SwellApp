@@ -198,6 +198,15 @@ struct ForecastView: View {
         let scores = Array(viewModel.hourlyScores.prefix(24))
 
         return VStack(alignment: .leading, spacing: 0) {
+            let columns: [GridItem] = [
+                GridItem(.fixed(3), spacing: 0),
+                GridItem(.flexible(), spacing: 8),
+                GridItem(.flexible(), spacing: 8),
+                GridItem(.flexible(), spacing: 8),
+                GridItem(.flexible(), spacing: 8),
+                GridItem(.flexible(), spacing: 8),
+            ]
+
             Text("Today")
                 .font(.headline)
                 .padding(.horizontal, 8)
@@ -205,13 +214,13 @@ struct ForecastView: View {
 
             Divider()
 
-            HStack(spacing: 0) {
+            LazyVGrid(columns: columns, spacing: 0) {
                 Color.clear.frame(width: 3)
-                Text("Time").frame(maxWidth: .infinity, alignment: .leading)
-                Text("Stars").frame(maxWidth: .infinity, alignment: .leading)
-                Text("Swell").frame(maxWidth: .infinity, alignment: .leading)
-                Text("Wind").frame(maxWidth: .infinity, alignment: .leading)
-                Text("").frame(maxWidth: .infinity, alignment: .leading)
+                Text("Time")
+                Text("Stars")
+                Text("Swell")
+                Text("Wind")
+                Text("")
             }
             .font(.system(size: 10, weight: .medium))
             .foregroundStyle(.secondary)
@@ -221,7 +230,7 @@ struct ForecastView: View {
             Divider()
 
             ForEach(scores) { score in
-                HStack(spacing: 0) {
+                LazyVGrid(columns: columns, spacing: 0) {
                     Rectangle()
                         .fill(qualityBarColor(score.starRating))
                         .frame(width: 3)
