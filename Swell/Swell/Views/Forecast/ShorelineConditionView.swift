@@ -10,15 +10,17 @@ struct ShorelineConditionView: View {
     private let size: CGFloat = 240
 
     var body: some View {
-        let half = size / 2
+        let oceanHeight = size * 0.85
+        let landHeight = size * 0.15
+        let shorelineY = oceanHeight - size / 2
 
         VStack(spacing: 10) {
             ZStack {
                 VStack(spacing: 0) {
                     oceanBackground
-                        .frame(height: half)
+                        .frame(height: oceanHeight)
                     landBackground
-                        .frame(height: half)
+                        .frame(height: landHeight)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 16))
 
@@ -30,23 +32,24 @@ struct ShorelineConditionView: View {
                         Rectangle()
                             .stroke(.black.opacity(0.1), lineWidth: 0.5)
                     )
+                    .offset(y: shorelineY)
 
                 Group {
                     Text("OCEAN")
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.45))
                         .tracking(4)
-                        .offset(y: -half + 20)
+                        .offset(y: -size / 2 + 18)
 
                     Text("LAND")
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.6))
                         .tracking(4)
-                        .offset(y: half - 20)
+                        .offset(y: size / 2 - 20)
                 }
 
-                swellWedge(size: size)
-                windWedge(size: size)
+                swellArrow(size: size)
+                windArrow(size: size)
             }
             .frame(width: size, height: size)
 
@@ -84,48 +87,83 @@ struct ShorelineConditionView: View {
             )
     }
 
-    // MARK: - Swell Wedge
+    // MARK: - Swell Arrow
 
-    func swellWedge(size: CGFloat) -> some View {
-        let wedgeLength = size * 0.50
-        let baseW: CGFloat = 48
+    func swellArrow(size: CGFloat) -> some View {
+        let arrowLength = size * 0.52
+        let shaftW: CGFloat = 16
+        let headW: CGFloat = 36
+        let headL: CGFloat = 14
+        let color = swellColor
 
         return ZStack {
-            WedgeShape(baseWidth: baseW, tipLength: wedgeLength)
-                .fill(swellArrowColor.opacity(0.88))
-            WedgeShape(baseWidth: baseW, tipLength: wedgeLength)
-                .stroke(swellArrowColor, lineWidth: 2)
+            ThickArrowShape(
+                shaftWidth: shaftW,
+                headWidth: headW,
+                shaftLength: arrowLength - headL,
+                headLength: headL,
+                totalLength: arrowLength
+            )
+            .fill(color.opacity(0.90))
+            .overlay(
+                ThickArrowShape(
+                    shaftWidth: shaftW,
+                    headWidth: headW,
+                    shaftLength: arrowLength - headL,
+                    headLength: headL,
+                    totalLength: arrowLength
+                )
+                .stroke(.white.opacity(0.3), lineWidth: 1)
+            )
 
             Text("Swell")
                 .font(.system(size: 11, weight: .bold))
                 .foregroundStyle(.white)
-                .offset(y: 6)
+                .rotationEffect(.degrees(-swellAngleRelativeToShore))
+                .offset(y: -arrowLength / 2 + 14)
         }
-        .frame(width: baseW, height: wedgeLength)
-        .offset(y: -(size - wedgeLength) / 2)
+        .frame(width: headW, height: arrowLength)
+        .offset(y: -(size - arrowLength) / 2)
         .rotationEffect(.degrees(swellAngleRelativeToShore))
     }
 
-    // MARK: - Wind Wedge
+    // MARK: - Wind Arrow
 
-    func windWedge(size: CGFloat) -> some View {
-        let wedgeLength = size * 0.35
-        let baseW: CGFloat = 40
-        let color = windArrowColor
+    func windArrow(size: CGFloat) -> some View {
+        let arrowLength = size * 0.38
+        let shaftW: CGFloat = 12
+        let headW: CGFloat = 30
+        let headL: CGFloat = 12
+        let color = windColor
 
         return ZStack {
-            WedgeShape(baseWidth: baseW, tipLength: wedgeLength)
-                .fill(color.opacity(0.88))
-            WedgeShape(baseWidth: baseW, tipLength: wedgeLength)
-                .stroke(color, lineWidth: 2)
+            ThickArrowShape(
+                shaftWidth: shaftW,
+                headWidth: headW,
+                shaftLength: arrowLength - headL,
+                headLength: headL,
+                totalLength: arrowLength
+            )
+            .fill(color.opacity(0.90))
+            .overlay(
+                ThickArrowShape(
+                    shaftWidth: shaftW,
+                    headWidth: headW,
+                    shaftLength: arrowLength - headL,
+                    headLength: headL,
+                    totalLength: arrowLength
+                )
+                .stroke(.white.opacity(0.3), lineWidth: 1)
+            )
 
             Text("Wind")
-                .font(.system(size: 11, weight: .bold))
+                .font(.system(size: 10, weight: .bold))
                 .foregroundStyle(.white)
-                .offset(y: 4)
+                .rotationEffect(.degrees(-windAngleRelativeToShore))
+                .offset(y: -arrowLength / 2 + 12)
         }
-        .frame(width: baseW, height: wedgeLength)
-        .offset(y: -(size - wedgeLength) / 2)
+        .frame(width: headW, height: arrowLength)
+        .offset(y: -(size - arrowLength) / 2)
         .rotationEffect(.degrees(windAngleRelativeToShore))
     }
 
@@ -133,8 +171,8 @@ struct ShorelineConditionView: View {
 
     var statsRow: some View {
         HStack(spacing: 24) {
-            statChip(color: swellArrowColor, label: swellLabel)
-            statChip(color: windArrowColor, label: windLabel)
+            statChip(color: windColor, label: windLabel)
+            statChip(color: swellColor, label: swellLabel)
         }
     }
 
@@ -183,32 +221,36 @@ struct ShorelineConditionView: View {
         return "Cross-shore wind"
     }
 
-    var windArrowColor: Color {
-        windScore > 0.6
-            ? Color(red: 0.13, green: 0.77, blue: 0.33)
-            : windScore > 0.3
-                ? Color(red: 0.96, green: 0.62, blue: 0.13)
-                : Color(red: 0.93, green: 0.27, blue: 0.27)
-    }
-
     // MARK: - Colors
 
     let shorelineColor = Color(red: 0.82, green: 0.74, blue: 0.50)
-    let swellArrowColor = Color(red: 0.00, green: 0.70, blue: 0.88)
+    let swellColor = Color.blue
+    let windColor = Color.purple
 }
 
 // MARK: - Shapes
 
-struct WedgeShape: Shape {
-    let baseWidth: CGFloat
-    let tipLength: CGFloat
+struct ThickArrowShape: Shape {
+    let shaftWidth: CGFloat
+    let headWidth: CGFloat
+    let shaftLength: CGFloat
+    let headLength: CGFloat
+    let totalLength: CGFloat
 
     func path(in rect: CGRect) -> Path {
         var p = Path()
-        let half = baseWidth / 2
-        p.move(to: CGPoint(x: rect.midX - half, y: 0))
-        p.addLine(to: CGPoint(x: rect.midX + half, y: 0))
-        p.addLine(to: CGPoint(x: rect.midX, y: tipLength))
+        let midX = rect.midX
+        let shaftHalf = shaftWidth / 2
+        let headHalf = headWidth / 2
+        let headStartY = shaftLength
+
+        p.move(to: CGPoint(x: midX - shaftHalf, y: 0))
+        p.addLine(to: CGPoint(x: midX + shaftHalf, y: 0))
+        p.addLine(to: CGPoint(x: midX + shaftHalf, y: headStartY))
+        p.addLine(to: CGPoint(x: midX + headHalf, y: headStartY))
+        p.addLine(to: CGPoint(x: midX, y: totalLength))
+        p.addLine(to: CGPoint(x: midX - headHalf, y: headStartY))
+        p.addLine(to: CGPoint(x: midX - shaftHalf, y: headStartY))
         p.closeSubpath()
         return p
     }
